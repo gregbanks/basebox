@@ -18,7 +18,8 @@ def installed_boxes():
     # being optional (added in vagrant 1.1 dev version)
     line_pattern = re.compile('^(?P<name>[^\s]+)(?:\s+\((?P<type>.*)\))?$')
     return [re.match(line_pattern, line).group('name')
-            for line in run('vagrant box list').splitlines()]
+            for line in run('vagrant box list').splitlines() if
+            re.match(line_pattern, line) is not None]
 
 
 class VagrantContext(object):
