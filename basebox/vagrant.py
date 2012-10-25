@@ -306,6 +306,12 @@ class VagrantContext(object):
     
     def snapshot(self, command, name=None, vm=None):
         """
+            commands:
+                take                -- take a snapshot and name it <name>
+                delete              -- delete <name> snapshot
+                restore             -- restore <name> snapshot
+                restorecurrent      -- restore the most recent snapshot
+                list                -- list snapshot info
           snapshot                  <uuid>|<name>
                             take <name> [--description <desc>] [--pause] |
                             delete <uuid>|<name> |
