@@ -9,7 +9,10 @@ Vagrant::Config.run do |config|
     {% if ssh.username %}config.ssh.username = "{{ ssh.username }}"{% endif %}
     {% if ssh.private_key_path %}config.ssh.private_key_path = "{{ ssh.private_key_path }}"{% endif %}
     
-    {% for host in hosts -%}
-    config.vm.define :{{ host }}
+    {% for host in hosts.keys() %}
+    config.vm.define :{{ host }} do |{{ host }}|
+        {{ host }}_config.vm.network :hostonly, "{{ hosts[host]['addresses']['private'] }}", adapter => 2
+        {{ which }}_config.vm.network :bridged, {adapter => 2, {{ bridge }}} 
     {% endfor %}
+    end
 end

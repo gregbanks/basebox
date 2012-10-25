@@ -303,6 +303,29 @@ class VagrantContext(object):
             cmd = ('VBoxManage controlvm %s %s %s' % 
                     (self.uuid(vm=vm), command, paramstring or ''))
             run(cmd)
+    
+    def snapshot(self, command, name=None, vm=None):
+        """
+          snapshot                  <uuid>|<name>
+                            take <name> [--description <desc>] [--pause] |
+                            delete <uuid>|<name> |
+                            restore <uuid>|<name> |
+                            restorecurrent |
+                            edit <uuid>|<name>|--current
+                                 [--name <name>]
+                                 [--description <desc>] |
+                            list [--details|--machinereadable]
+                            showvminfo <uuid>|<name>
+        """
+        if command in ('take', 'delete', 'restore') and name is None:
+            raise Exception('name required for snapshot command <%s>' % (name))
+        with self.execution_context():
+            cmd = ('VBoxManage snapshot %s %s %s' % 
+                    (self.uuid(vm=vm), command, name or ''))
+            result = run(cmd)
+        if result.failed:
+            raise Exception(result)
+        return result
 
 
 class _VagrantConnectionManager(object):
