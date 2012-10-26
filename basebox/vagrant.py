@@ -257,7 +257,7 @@ class VagrantContext(object):
             }
 
     def rewrite_vagrantfile(self, contents, vm=None):
-        put(StringIO(contents), os.path.join(self.directory, 'Vagrantfile'))
+        file_write(os.path.join(self.directory, 'Vagrantfile'), contents)
         # self.connect(vm=vm)
 
     def read_vagrantfile(self, vm=None):
