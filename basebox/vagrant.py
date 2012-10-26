@@ -8,7 +8,7 @@ import types
 
 from fabric.api import *
 from fabric.colors import *
-from cuisine import run, file_exists, is_local, mode_remote, mode_local
+from cuisine import run, file_exists, is_local, mode_remote, mode_local, file_read, file_write
 from .util import shell_env
 
 
@@ -255,11 +255,11 @@ class VagrantContext(object):
             }
 
     def rewrite_vagrantfile(self, contents, vm=None):
-        open(os.path.join(self.directory, 'Vagrantfile'), 'w').write(contents)
+        file_write(os.path.join(self.directory, 'Vagrantfile'), contents)
         # self.connect(vm=vm)
 
     def read_vagrantfile(self, vm=None):
-        return open(os.path.join(self.directory, 'Vagrantfile')).read()
+        return file_read(os.path.join(self.directory, 'Vagrantfile'))
 
 
     # ----------------------------------------------------------------------
