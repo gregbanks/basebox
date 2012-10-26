@@ -6,6 +6,8 @@ import re
 import tempfile
 import types
 
+from StringIO import StringIO
+
 from fabric.api import *
 from fabric.colors import *
 from cuisine import run, file_exists, is_local, mode_remote, mode_local, file_read, file_write
@@ -255,7 +257,7 @@ class VagrantContext(object):
             }
 
     def rewrite_vagrantfile(self, contents, vm=None):
-        file_write(os.path.join(self.directory, 'Vagrantfile'), contents)
+        put(StringIO(contents), os.path.join(self.directory, 'Vagrantfile'))
         # self.connect(vm=vm)
 
     def read_vagrantfile(self, vm=None):
