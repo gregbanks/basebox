@@ -49,7 +49,7 @@ class VagrantContext(object):
             if not file_exists(runfile):
                 self.up(vm=vm)
 
-            runinfo = json.load(open(runfile, 'r'))
+            runinfo = json.loads(file_read(runfile))
             self._uuid[vm] = runinfo['active'].get(vm or 'default')
 
         return self._uuid.get(vm)
