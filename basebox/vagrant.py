@@ -6,8 +6,6 @@ import re
 import tempfile
 import types
 
-from StringIO import StringIO
-
 from fabric.api import *
 from fabric.colors import *
 from cuisine import run, file_exists, is_local, mode_remote, mode_local, file_read, file_write
