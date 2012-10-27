@@ -46,11 +46,12 @@ class VagrantContext(object):
         '''
         if not self._uuid.get(vm):
             runfile = os.path.join(self.directory, '.vagrant')
-            if not file_exists(runfile):
-                self.up(vm=vm)
+            with hide('running', 'stdout'):
+                if not file_exists(runfile):
+                    self.up(vm=vm)
 
-            runinfo = json.loads(file_read(runfile))
-            self._uuid[vm] = runinfo['active'].get(vm or 'default')
+                runinfo = json.loads(file_read(runfile))
+                self._uuid[vm] = runinfo['active'].get(vm or 'default')
 
         return self._uuid.get(vm)
 
@@ -312,25 +313,20 @@ class VagrantContext(object):
                 restore             -- restore <name> snapshot
                 restorecurrent      -- restore the most recent snapshot
                 list                -- list snapshot info
-          snapshot                  <uuid>|<name>
-                            take <name> [--description <desc>] [--pause] |
-                            delete <uuid>|<name> |
-                            restore <uuid>|<name> |
-                            restorecurrent |
-                            edit <uuid>|<name>|--current
-                                 [--name <name>]
-                                 [--description <desc>] |
-                            list [--details|--machinereadable]
-                            showvminfo <uuid>|<name>
         """
         if command in ('take', 'delete', 'restore') and name is None:
             raise Exception('name required for snapshot command <%s>' % (name))
         with self.execution_context():
-            cmd = ('VBoxManage snapshot %s %s %s' % 
-                    (self.uuid(vm=vm), command, name or ''))
-            result = run(cmd)
+            opts = ''
+            if command == 'list':
+                opts += '--machinereadable '
+            cmd = ('VBoxManage snapshot %s %s %s %s' % 
+                    (self.uuid(vm=vm), command, opts, name or ''))
+            with settings(hide('warnings', 'stdout', 'stderr', 'running'), warn_only=True):
+                result = run(cmd)
         if result.failed:
-            raise Exception(result)
+            if command != 'list' or 'does not have any snapshots' not in result:
+                raise Exception(result)
         return result
 
 
