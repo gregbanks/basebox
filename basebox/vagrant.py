@@ -50,8 +50,16 @@ class VagrantContext(object):
                 if not file_exists(runfile):
                     self.up(vm=vm)
 
-                runinfo = json.loads(file_read(runfile))
-                self._uuid[vm] = runinfo['active'].get(vm or 'default')
+                # newer versions of vagrant use folders instead of a single JSON file
+                if os.path.isdir(runfile):
+                    idfile = os.path.join(runfile, 'machines', vm or 'default', 'virtualbox', 'id')
+                    # when boxes are destroyed the folders persist, so we can't assume the box exists yet
+                    if not file_exists(idfile):
+                        self.up(vm=vm)
+                    self._uuid[vm] = file_read(idfile)
+                else:
+                    runinfo = json.loads(file_read(runfile))
+                    self._uuid[vm] = runinfo['active'].get(vm or 'default')
 
         return self._uuid.get(vm)
 
